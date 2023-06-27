@@ -54,15 +54,6 @@ npm run test
 ## Building and starting for production
 
 ```bash
-npm run build
-npm start
-```
-
-## Running migrations or generate prisma clients
-
-Before running migrations make sure you have a postgres db running based on `.env.development` or `.env.test` file for each environment. You can start a postgres instance by typing `npm run dev:postgres` or `npm run test:postgres`. The host name is the name of the postgres container inside docker-compose file if you are running the application inside a docker container or localhost if you are running it locally.
-
-You can operate on databases for different environments, but it is necessary to populate correct env variables for each environment first, so in order to perform db operations type the following commands:
 
 - `npm run dev:migration:run` - run migrations for development environment by loading envs from .env.development file. It uses [dotenv-cli](https://github.com/entropitor/dotenv-cli#readme) to load envs from .env.development file.
 - `npm run test:migration:run` - the same, but for test environment
@@ -72,6 +63,6 @@ You can operate on databases for different environments, but it is necessary to 
 ## What to do when add new ENV VARIABLES
 
 There are several things you need to do when you add new ENV VARIABLES:
-
 - Add them to `.env.example` file
 - Add them to your local `.env.development` and `.env.test` files
+```
