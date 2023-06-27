@@ -90,7 +90,6 @@ describe('GET /enrollments/cep', () => {
 
   it('should respond with status 204 when CEP is invalid', async () => {
     const response = await server.get('/enrollments/cep?cep=00');
-
     expect(response.status).toBe(httpStatus.NO_CONTENT);
   });
 });
