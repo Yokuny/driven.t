@@ -1,7 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 
 export let prisma: PrismaClient;
-
 export function connectDb(): void {
   if (prisma) {
     return;
