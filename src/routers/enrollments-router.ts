@@ -4,10 +4,10 @@ import { getEnrollmentByUser, postCreateOrUpdateEnrollment, getAddressFromCEP } 
 import { createEnrollmentSchema } from '@/schemas';
 
 const enrollmentsRouter = Router();
+// .get('/cep', validateQuery(cepSchema), getAddressFromCEP)
 
 enrollmentsRouter
   .get('/cep', validateQuery(cepSchema), getAddressFromCEP)
-  .get('/cep', getAddressFromCEP)
   .all('/*', authenticateToken)
   .get('/', getEnrollmentByUser)
   .post('/', validateBody(createEnrollmentSchema), postCreateOrUpdateEnrollment);
