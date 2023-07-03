@@ -29,22 +29,58 @@ async function getAddressFromCEP(cep: string): Promise<AddressEnrollment> {
 async function createOrUpdateEnrollmentWithAddress(params: CreateOrUpdateEnrollmentWithAddress) {
   const address = getAddressForUpsert(params.address);
 
-  await getAddressFromCEP(params.address.cep);
-
-  const date = params.birthday.toString();
-  const [year, month, day] = date.split('-');
-
-  const dateFormate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-
-  if (isNaN(dateFormate.getTime())) {
-    console.error('A data de aniversário é inválida.');
+  const formattedCEP = params.address.cep.replace(/-/g, '');
+  const birthdayString = params.birthday.toString();
+  const [year, month, day] = birthdayString.split('-');
+  const birthdayFormatted = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+  if (isNaN(birthdayFormatted.getTime())) {
+    console.log('invalid date');
     return;
   }
-  const enrollment = { ...exclude(params, 'address') };
-  const newEnrollment = await enrollmentRepository.upsert(params.userId, enrollment, exclude(enrollment, 'userId'));
+  const body = {
+    name: params.name,
+    cpf: params.cpf,
+    birthday: birthdayFormatted,
+    phone: params.phone,
+    userId: params.userId,
+    address: {
+      cep: formattedCEP,
+      street: params.address.street,
+      city: params.address.city,
+      number: params.address.number,
+      state: params.address.state,
+      neighborhood: params.address.neighborhood,
+      addressDetail: params.address.addressDetail,
+    },
+  };
 
+  await getAddressFromCEP(address.cep);
+  const enrollment = { ...exclude(params, 'address') };
+  const newEnrollment = await enrollmentRepository.upsert(body.userId, enrollment, exclude(enrollment, 'userId'));
+
+  console.log('newEnrollmenmt', newEnrollment);
   await addressRepository.upsert(newEnrollment.id, address, address);
 }
+
+// async function createOrUpdateEnrollmentWithAddress(params: CreateOrUpdateEnrollmentWithAddress) {
+//   const address = getAddressForUpsert(params.address);
+
+//   await getAddressFromCEP(params.address.cep);
+
+//   const date = params.birthday.toString();
+//   const [year, month, day] = date.split('-');
+
+//   const dateFormate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+
+//   if (isNaN(dateFormate.getTime())) {
+//     console.error('A data de aniversário é inválida.');
+//     return;
+//   }
+//   const enrollment = { ...exclude(params, 'address') };
+//   const newEnrollment = await enrollmentRepository.upsert(params.userId, enrollment, exclude(enrollment, 'userId'));
+
+//   await addressRepository.upsert(newEnrollment.id, address, address);
+// }
 
 function getAddressForUpsert(address: CreateAddressParams) {
   return {
