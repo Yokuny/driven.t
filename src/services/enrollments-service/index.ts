@@ -1,6 +1,6 @@
 import { Address, Enrollment } from '@prisma/client';
 import { request } from '@/utils/request';
-import { invalidDataError, notFoundError } from '@/errors';
+import { NoContentError, notFoundError } from '@/errors';
 import addressRepository, { CreateAddressParams } from '@/repositories/address-repository';
 import enrollmentRepository, { CreateEnrollmentParams } from '@/repositories/enrollment-repository';
 import { exclude } from '@/utils/prisma-utils';
@@ -31,18 +31,16 @@ async function createOrUpdateEnrollmentWithAddress(params: CreateOrUpdateEnrollm
 
   await getAddressFromCEP(params.address.cep);
 
-  const birthdayString = params.birthday.toString();
-  const [year, month, day] = birthdayString.split('-');
+  const date = params.birthday.toString();
+  const [year, month, day] = date.split('-');
 
-  // Construir o objeto Date com os valores extraídos
-  const birthdayIso = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+  const dateFormate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
 
-  // Verificar se a data é válida
-  if (isNaN(birthdayIso.getTime())) {
+  if (isNaN(dateFormate.getTime())) {
     console.error('A data de aniversário é inválida.');
     return;
   }
-  const enrollment = { ...exclude(params, 'address') /* , birthday: birthdayIso */ };
+  const enrollment = { ...exclude(params, 'address') };
   const newEnrollment = await enrollmentRepository.upsert(params.userId, enrollment, exclude(enrollment, 'userId'));
 
   await addressRepository.upsert(newEnrollment.id, address, address);

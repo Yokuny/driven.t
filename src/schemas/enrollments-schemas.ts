@@ -4,10 +4,10 @@ import { CreateOrUpdateEnrollmentWithAddress } from '@/services/enrollments-serv
 
 const cpfValidationSchema = Joi.string().length(11).custom(joiCpfValidation).required();
 
-export const cepValidationSchema = Joi.string().min(8).max(9).custom(JoiCepValidation).required();
+export const cepValidationSchema = Joi.string().length(9).custom(JoiCepValidation).required();
 
 export const cepSchema = Joi.object({
-  cep: Joi.string().min(8).max(9).custom(JoiCepValidation).required(),
+  cep: Joi.string().length(9).custom(JoiCepValidation).required(),
 });
 
 const mobilePhoneValidationSchema = Joi.string().min(14).max(15).custom(joiMobilePhoneValidation).required();
