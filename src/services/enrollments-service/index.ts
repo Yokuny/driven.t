@@ -26,6 +26,39 @@ async function getAddressFromCEP(cep: string): Promise<AddressEnrollment> {
   return address;
 }
 
+async function createOrUpdateEnrollmentWithAddress(params: CreateOrUpdateEnrollmentWithAddress) {
+  const address = getAddressForUpsert(params.address);
+
+  await getAddressFromCEP(params.address.cep);
+
+  const birthdayString = params.birthday.toString();
+  const [year, month, day] = birthdayString.split('-');
+
+  // Construir o objeto Date com os valores extraídos
+  const birthdayIso = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+
+  // Verificar se a data é válida
+  if (isNaN(birthdayIso.getTime())) {
+    console.error('A data de aniversário é inválida.');
+    return;
+  }
+  const enrollment = { ...exclude(params, 'address') /* , birthday: birthdayIso */ };
+  const newEnrollment = await enrollmentRepository.upsert(params.userId, enrollment, exclude(enrollment, 'userId'));
+
+  await addressRepository.upsert(newEnrollment.id, address, address);
+}
+
+function getAddressForUpsert(address: CreateAddressParams) {
+  return {
+    ...address,
+    ...(address?.addressDetail && { addressDetail: address.addressDetail }),
+  };
+}
+
+export type CreateOrUpdateEnrollmentWithAddress = CreateEnrollmentParams & {
+  address: CreateAddressParams;
+};
+
 async function getOneWithAddressByUserId(userId: number): Promise<GetOneWithAddressByUserIdResult> {
   const enrollmentWithAddress = await enrollmentRepository.findWithAddressByUserId(userId);
 
