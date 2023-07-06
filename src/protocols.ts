@@ -44,3 +44,11 @@ export type RequestError = {
   name: string;
   message: string;
 };
+
+export type AddressObj = {
+  logradouro: string | null;
+  complemento: string | null;
+  bairro: string | null;
+  cidade: string;
+  uf: string;
+};
