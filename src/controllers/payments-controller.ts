@@ -10,7 +10,9 @@ export async function paymentInfo(req: AuthenticatedRequest, res: Response) {
     const status = await paymentsService.ticketIdStatus(ticket, req.userId, false);
     return res.status(httpStatus.OK).send(status);
   } catch (error) {
-    if (error.message === 'USER_HAS_NO_TICKETS') return res.sendStatus(httpStatus.UNAUTHORIZED);
+    if (error.type === 'USER_WITHOUT_TICKETS') return res.sendStatus(httpStatus.UNAUTHORIZED);
+    if (error.type === 'NO_TICKET_ID') return res.sendStatus(httpStatus.BAD_REQUEST);
+    if (error.type === 'NOT_OWNER') return res.sendStatus(httpStatus.UNAUTHORIZED);
     return res.status(httpStatus.NOT_FOUND).send({});
   }
 }
@@ -22,7 +24,7 @@ export async function makePayment(req: AuthenticatedRequest, res: Response) {
     const pay = await paymentsService.processPayment(ticketId, cardData, req.userId);
     return res.status(httpStatus.OK).send(pay);
   } catch (error) {
-    if (error.message === 'USER_HAS_NO_TICKETS') return res.sendStatus(httpStatus.UNAUTHORIZED);
+    if (error.type === 'USER_WITHOUT_TICKETS') return res.sendStatus(httpStatus.UNAUTHORIZED);
     return res.status(httpStatus.NOT_FOUND).send({});
   }
 }

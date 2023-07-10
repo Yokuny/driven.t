@@ -5,7 +5,13 @@ import { Card } from '@/protocols';
 
 const ticketIdStatus = async (ticketId: number, userId: number, toReturn: boolean) => {
   const payment = await paymentRepository.paymentStatus(ticketId);
-  if (!payment || payment === null) throw new Error('NO_TICKET_ID');
+  if (!payment || payment === null)
+    throw new Error(
+      JSON.stringify({
+        type: 'NO_TICKET_ID',
+        message: 'Ticket não encontrado',
+      }),
+    );
 
   const tickets = await ticketsService.userTickets(userId);
   if (toReturn) return tickets as Ticket | null;

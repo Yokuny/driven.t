@@ -27,6 +27,8 @@ export async function postTickets(req: Request, res: Response) {
     const ticket = await ticketService.postTickets(parseInt(req.body.ticketTypeId), parseInt(req.body.id));
     return res.status(httpStatus.CREATED).json(ticket);
   } catch (error) {
-    return res.status(httpStatus.NOT_FOUND).send([]);
+    if (error.type === 'WITHOUT_ENROLLMENT' || error.type === 'NotFoundError')
+      return res.sendStatus(httpStatus.NOT_FOUND);
+    return res.status(httpStatus.BAD_REQUEST).send([]);
   }
 }
