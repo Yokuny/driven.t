@@ -1,17 +1,31 @@
-import { TicketType } from '@prisma/client';
+import { TicketType, TicketStatus } from '@prisma/client';
+
 import { prisma } from '@/config';
 
 async function getAllTickets(): Promise<TicketType[]> {
-  return prisma.ticketType.findMany();
-}
+  try {
+    return await prisma.ticketType.findMany();
+  } catch (error) {
+    throw new Error('Falha ao obter tipos de ticket:' + error.message);
+  }
+} // done
 
 async function findUserTicket(userId: number) {
-  return await prisma.ticket.findFirst({
-    where: {
-      enrollmentId: userId,
-    },
-  });
-}
+  try {
+    return await prisma.ticket.findFirst({
+      where: {
+        Enrollment: {
+          userId: userId,
+        },
+      },
+      include: {
+        TicketType: true,
+      },
+    });
+  } catch (error) {
+    throw new Error('Falha ao obter ticket do usuário:' + error.message);
+  }
+} // done
 
 async function postTickets(ticketType: number, userId: number) {
   try {
@@ -19,13 +33,15 @@ async function postTickets(ticketType: number, userId: number) {
       data: {
         ticketTypeId: ticketType,
         enrollmentId: userId,
-        status: 'RESERVED',
+        status: TicketStatus.RESERVED,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       },
     });
   } catch (error) {
-    throw new Error(error);
+    throw new Error('Falha ao criar ticket:' + error.message);
   }
-}
+} //done
 
 const ticketsRepository = {
   getAllTickets,
