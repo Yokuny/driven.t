@@ -14,8 +14,15 @@ const ticketIdStatus = async (ticketId: number, userId: number, toReturn: boolea
     );
 
   const tickets = await ticketsService.userTickets(userId);
-  if (toReturn) return tickets as Ticket | null;
+  if (!tickets || tickets === null)
+    throw new Error(
+      JSON.stringify({
+        type: 'USER_WITHOUT_TICKETS',
+        message: 'Usuário não possui tickets',
+      }),
+    );
 
+  if (toReturn) return tickets as Ticket | null;
   return payment.Payment[0];
 };
 
@@ -29,11 +36,9 @@ const processPayment = async (ticketId: number, cardData: Card, userId: number) 
   if (!ticket || !ticketType) throw new Error('Ticket or TicketType not found');
   const finalNumbers = cardData.number.toString().substring(cardData.number.toString().length - 4);
 
-  const value = ticketType.price;
-
   const paymentData: Omit<Payment, 'id'> = {
     ticketId: ticket.id,
-    value: value,
+    value: ticketType.price,
     cardIssuer: cardData.issuer,
     cardLastDigits: finalNumbers,
     createdAt: new Date(),

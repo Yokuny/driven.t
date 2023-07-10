@@ -25,6 +25,8 @@ export async function makePayment(req: AuthenticatedRequest, res: Response) {
     return res.status(httpStatus.OK).send(pay);
   } catch (error) {
     if (error.type === 'USER_WITHOUT_TICKETS') return res.sendStatus(httpStatus.UNAUTHORIZED);
+    if (error.type === 'NO_TICKET_ID') return res.sendStatus(httpStatus.BAD_REQUEST);
+    if (error.type === 'NOT_OWNER') return res.sendStatus(httpStatus.UNAUTHORIZED);
     return res.status(httpStatus.NOT_FOUND).send({});
   }
 }
