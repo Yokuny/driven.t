@@ -10,7 +10,7 @@ export async function ticketsType(req: Request, res: Response) {
   } catch (error) {
     return res.status(httpStatus.NOT_FOUND).send([]);
   }
-} // done
+}
 
 export async function userTickets(req: AuthenticatedRequest, res: Response) {
   const userId = req.userId;
@@ -20,7 +20,7 @@ export async function userTickets(req: AuthenticatedRequest, res: Response) {
   } catch (error) {
     return res.status(httpStatus.NOT_FOUND).send([]);
   }
-} // done
+}
 
 export async function postTickets(req: Request, res: Response) {
   try {
@@ -29,4 +29,4 @@ export async function postTickets(req: Request, res: Response) {
   } catch (error) {
     return res.status(httpStatus.NOT_FOUND).send([]);
   }
-} // done
+}

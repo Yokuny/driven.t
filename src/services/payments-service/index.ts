@@ -1,41 +1,52 @@
-import { User } from '@prisma/client';
-import bcrypt from 'bcrypt';
-import eventsService from '../events-service';
-import { duplicatedEmailError } from './errors';
-import userRepository from '@/repositories/user-repository';
-import { cannotEnrollBeforeStartDateError } from '@/errors';
+import { Ticket, Payment } from '@prisma/client';
+import ticketsService from '@/services/tickets-service';
+import paymentRepository from '@/repositories/payment-repository';
+import { Card } from '@/protocols';
 
-export async function createUser({ email, password }: CreateUserParams): Promise<User> {
-  await canEnrollOrFail();
+const ticketIdStatus = async (ticketId: number, userId: number, toReturn: boolean) => {
+  const payment = await paymentRepository.paymentStatus(ticketId);
+  if (!payment || payment === null) throw new Error('NO_TICKET_ID');
 
-  await validateUniqueEmailOrFail(email);
+  const tickets = await ticketsService.userTickets(userId);
+  if (toReturn) return tickets as Ticket | null;
 
-  const hashedPassword = await bcrypt.hash(password, 12);
-  return userRepository.create({
-    email,
-    password: hashedPassword,
-  });
-}
-
-async function validateUniqueEmailOrFail(email: string) {
-  const userWithSameEmail = await userRepository.findByEmail(email);
-  if (userWithSameEmail) {
-    throw duplicatedEmailError();
-  }
-}
-
-async function canEnrollOrFail() {
-  const canEnroll = await eventsService.isCurrentEventActive();
-  if (!canEnroll) {
-    throw cannotEnrollBeforeStartDateError();
-  }
-}
-
-export type CreateUserParams = Pick<User, 'email' | 'password'>;
-
-const userService = {
-  createUser,
+  return payment.Payment[0];
 };
 
-export * from './errors';
-export default userService;
+const processPayment = async (ticketId: number, cardData: Card, userId: number) => {
+  const ticket = await ticketIdStatus(ticketId, userId, true);
+  await paymentRepository.payTicket(ticket as Ticket);
+
+  const type = await ticketsService.getAllTickets();
+  const ticketType = type.find((type) => type.id === (ticket as Ticket)?.ticketTypeId);
+
+  if (!ticket || !ticketType) throw new Error('Ticket or TicketType not found');
+  const finalNumbers = cardData.number.toString().substring(cardData.number.toString().length - 4);
+
+  const value = ticketType.price;
+
+  const paymentData: Omit<Payment, 'id'> = {
+    ticketId: ticket.id,
+    value: value,
+    cardIssuer: cardData.issuer,
+    cardLastDigits: finalNumbers,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+
+  const insertedPayment = await paymentRepository.createPayment(paymentData);
+  return insertedPayment;
+};
+
+async function payTicket(ticket: Ticket) {
+  const paidTicket = await paymentRepository.payTicket(ticket);
+  return paidTicket;
+}
+
+const paymentsService = {
+  ticketIdStatus,
+  processPayment,
+  payTicket,
+};
+
+export default paymentsService;

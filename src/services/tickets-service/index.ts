@@ -1,11 +1,11 @@
-import { TicketType } from '@prisma/client';
+import { Ticket, TicketType } from '@prisma/client';
 
 import ticketsRepository from '@/repositories/tickets-repository.ts';
 import enrollmentService from '@/services/enrollments-service';
 
-export async function getAllTickets(): Promise<TicketType[]> {
+async function getAllTickets(): Promise<TicketType[]> {
   return await ticketsRepository.getAllTickets();
-} // done
+}
 
 async function userTickets(id: number) {
   const ticket = await ticketsRepository.findUserTicket(id);
@@ -13,7 +13,7 @@ async function userTickets(id: number) {
   return ticket;
   // puxar os erros de './errors';
   // if (!ticket) throw new TicketNotFound();
-} // done
+}
 
 async function postTickets(Type: number, userId: number) {
   const allTypes = await ticketsRepository.getAllTickets();
@@ -43,5 +43,4 @@ const ticketService = {
   postTickets,
 };
 
-export * from './errors';
 export default ticketService;

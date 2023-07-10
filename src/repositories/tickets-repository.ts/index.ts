@@ -1,4 +1,4 @@
-import { TicketType, TicketStatus } from '@prisma/client';
+import { Ticket, TicketType, TicketStatus } from '@prisma/client';
 
 import { prisma } from '@/config';
 
@@ -42,7 +42,6 @@ async function postTickets(ticketType: number, userId: number) {
     throw new Error('Falha ao criar ticket:' + error.message);
   }
 } //done
-
 const ticketsRepository = {
   getAllTickets,
   findUserTicket,

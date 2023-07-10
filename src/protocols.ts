@@ -52,3 +52,11 @@ export type AddressObj = {
   cidade: string;
   uf: string;
 };
+
+export type Card = {
+  issuer: string;
+  number: number;
+  name: string;
+  expirationDate: string;
+  cvv: number;
+};
