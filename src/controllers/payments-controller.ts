@@ -22,7 +22,7 @@ export async function makePayment(req: AuthenticatedRequest, res: Response) {
 
   try {
     const pay = await paymentsService.processPayment(ticketId, cardData, req.userId);
-    return res.status(httpStatus.OK).send(pay);
+    return res.status(httpStatus.CREATED).send(pay);
   } catch (error) {
     if (error.type === 'USER_WITHOUT_TICKETS') return res.sendStatus(httpStatus.UNAUTHORIZED);
     if (error.type === 'NO_TICKET_ID') return res.sendStatus(httpStatus.BAD_REQUEST);
