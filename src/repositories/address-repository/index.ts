@@ -1,4 +1,4 @@
-import { Address } from '@prisma/client';
+import { Event } from '@prisma/client';
 import { prisma } from '@/config';
 
 async function upsert(enrollmentId: number, createdAddress: CreateAddressParams, updatedAddress: UpdateAddressParams) {
