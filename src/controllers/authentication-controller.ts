@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import httpStatus from 'http-status';
-import authenticationService, { SignInParams } from '@/services/authentication-service';
+import authenticationService from '@/services/authentication-service';
+import { SignInParams } from '@/protocols';
 
 export async function singInPost(req: Request, res: Response) {
   const { email, password } = req.body as SignInParams;

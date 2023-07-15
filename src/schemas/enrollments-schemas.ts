@@ -1,6 +1,6 @@
 import { getStates, isValidCEP, isValidCPF, isValidMobilePhone } from '@brazilian-utils/brazilian-utils';
 import Joi from 'joi';
-import { CreateOrUpdateEnrollmentWithAddress } from '@/services/enrollments-service';
+import { CreateOrUpdateEnrollmentWithAddress } from '@/protocols';
 
 const cpfValidationSchema = Joi.string().length(11).custom(joiCpfValidation).required();
 

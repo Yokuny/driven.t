@@ -1,29 +1,31 @@
-import { Address, Enrollment } from '@prisma/client';
+import { Address } from '@prisma/client';
 import { request } from '@/utils/request';
 import { notFoundError } from '@/errors';
-import addressRepository, { CreateAddressParams } from '@/repositories/address-repository';
-import enrollmentRepository, { CreateEnrollmentParams } from '@/repositories/enrollment-repository';
+import addressRepository from '@/repositories/address-repository';
+import enrollmentRepository from '@/repositories/enrollment-repository';
 import { exclude } from '@/utils/prisma-utils';
-import { AddressEnrollment } from '@/protocols';
+import {
+  AddressEnrollment,
+  GetOneWithAddressByUserIdResult,
+  GetAddressResult,
+  CreateOrUpdateEnrollmentWithAddress,
+  CreateAddressParams,
+} from '@/protocols';
 
 async function getAddressFromCEP(cep: string): Promise<AddressEnrollment> {
   const result = await request.get(`${process.env.VIA_CEP_API}/${cep}/json/`);
 
-  if (!result.data || result.data.erro) {
-    throw notFoundError();
-  }
+  if (!result.data || result.data.erro) throw notFoundError();
 
   const { bairro, localidade, uf, complemento, logradouro } = result.data;
 
-  const address: AddressEnrollment = {
+  return {
     bairro,
     cidade: localidade,
     uf,
     complemento,
     logradouro,
   };
-
-  return address;
 }
 
 async function getOneWithAddressByUserId(userId: number): Promise<GetOneWithAddressByUserIdResult> {
@@ -40,15 +42,11 @@ async function getOneWithAddressByUserId(userId: number): Promise<GetOneWithAddr
   };
 }
 
-type GetOneWithAddressByUserIdResult = Omit<Enrollment, 'userId' | 'createdAt' | 'updatedAt'>;
-
 function getFirstAddress(firstAddress: Address): GetAddressResult {
   if (!firstAddress) return null;
 
   return exclude(firstAddress, 'createdAt', 'updatedAt', 'enrollmentId');
 }
-
-type GetAddressResult = Omit<Address, 'createdAt' | 'updatedAt' | 'enrollmentId'>;
 
 async function createOrUpdateEnrollmentWithAddress(params: CreateOrUpdateEnrollmentWithAddress) {
   const enrollment = exclude(params, 'address');
@@ -67,10 +65,6 @@ function getAddressForUpsert(address: CreateAddressParams) {
     ...(address?.addressDetail && { addressDetail: address.addressDetail }),
   };
 }
-
-export type CreateOrUpdateEnrollmentWithAddress = CreateEnrollmentParams & {
-  address: CreateAddressParams;
-};
 
 const enrollmentsService = {
   getOneWithAddressByUserId,

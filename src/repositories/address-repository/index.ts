@@ -1,7 +1,12 @@
-import { Event } from '@prisma/client';
+import { Address } from '@prisma/client';
 import { prisma } from '@/config';
+import { CreateAddressParams, UpdateAddressParams } from '@/protocols';
 
-async function upsert(enrollmentId: number, createdAddress: CreateAddressParams, updatedAddress: UpdateAddressParams) {
+async function upsert(
+  enrollmentId: number,
+  createdAddress: CreateAddressParams,
+  updatedAddress: UpdateAddressParams,
+): Promise<Address> {
   return prisma.address.upsert({
     where: {
       enrollmentId,
@@ -13,9 +18,6 @@ async function upsert(enrollmentId: number, createdAddress: CreateAddressParams,
     update: updatedAddress,
   });
 }
-
-export type CreateAddressParams = Omit<Address, 'id' | 'createdAt' | 'updatedAt' | 'enrollmentId'>;
-export type UpdateAddressParams = CreateAddressParams;
 
 const addressRepository = {
   upsert,

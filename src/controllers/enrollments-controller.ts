@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import httpStatus from 'http-status';
-import { AuthenticatedRequest } from '@/middlewares';
+import { AuthenticatedRequest } from '@/protocols';
 import enrollmentsService from '@/services/enrollments-service';
 
 export async function getEnrollmentByUser(req: AuthenticatedRequest, res: Response) {

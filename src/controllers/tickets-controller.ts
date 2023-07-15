@@ -1,8 +1,7 @@
 import { Response } from 'express';
 import httpStatus from 'http-status';
-import { AuthenticatedRequest } from '@/middlewares';
+import { AuthenticatedRequest, InputTicketBody } from '@/protocols';
 import ticketService from '@/services/tickets-service';
-import { InputTicketBody } from '@/protocols';
 
 export async function getTicketTypes(req: AuthenticatedRequest, res: Response) {
   try {

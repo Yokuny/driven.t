@@ -1,7 +1,7 @@
 import { prisma } from '@/config';
 import { PaymentParams } from '@/protocols';
 
-async function findPaymentByTicketId(ticketId: number) {
+async function findPaymentByTicketId(ticketId: number): Promise<PaymentParams> {
   return prisma.payment.findFirst({
     where: {
       ticketId,
@@ -9,7 +9,7 @@ async function findPaymentByTicketId(ticketId: number) {
   });
 }
 
-async function createPayment(ticketId: number, params: PaymentParams) {
+async function createPayment(ticketId: number, params: PaymentParams): Promise<PaymentParams> {
   return prisma.payment.create({
     data: {
       ticketId,

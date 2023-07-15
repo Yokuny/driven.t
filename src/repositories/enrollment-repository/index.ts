@@ -1,7 +1,8 @@
-import { Enrollment } from '@prisma/client';
+import { Address, Enrollment } from '@prisma/client';
 import { prisma } from '@/config';
+import { CreateEnrollmentParams, UpdateEnrollmentParams } from '@/protocols';
 
-async function findWithAddressByUserId(userId: number) {
+async function findWithAddressByUserId(userId: number): Promise<Enrollment & { Address: Address[] }> {
   return prisma.enrollment.findFirst({
     where: { userId },
     include: {
@@ -24,14 +25,11 @@ async function upsert(
   });
 }
 
-async function findById(enrollmentId: number) {
+async function findById(enrollmentId: number): Promise<Enrollment> {
   return prisma.enrollment.findFirst({
     where: { id: enrollmentId },
   });
 }
-
-export type CreateEnrollmentParams = Omit<Enrollment, 'id' | 'createdAt' | 'updatedAt'>;
-export type UpdateEnrollmentParams = Omit<CreateEnrollmentParams, 'userId'>;
 
 const enrollmentRepository = {
   findWithAddressByUserId,
