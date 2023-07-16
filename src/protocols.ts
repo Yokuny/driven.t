@@ -103,3 +103,5 @@ export type AuthenticatedRequest = Request & JWTPayload;
 export type JWTPayload = {
   userId: number;
 };
+
+export type AddressOrAddressArray = Address | Address[];
