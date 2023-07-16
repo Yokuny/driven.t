@@ -9,7 +9,7 @@ const getHotels = async (req: AuthenticatedRequest, res: Response) => {
     const hotels = await hotelsService.getAllHotels(Number(userId));
     return res.status(httpStatus.OK).send(hotels);
   } catch (err) {
-    if (err.type === 'BAD_REQUEST') {
+    if (err.type === 'UnauthorizedError') {
       return res.sendStatus(httpStatus.BAD_REQUEST);
     }
     if (err.name === 'NotFoundError') {
@@ -26,7 +26,7 @@ const getRooms = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const HotelRooms = await hotelsService.getHotelRooms(Number(userId), Number(hotelId));
 
-    res.status(httpStatus.OK).send(HotelRooms);
+    return res.status(httpStatus.OK).send(HotelRooms);
   } catch (err) {
     if (err.name === 'UnauthorizedError') {
       res.sendStatus(httpStatus.PAYMENT_REQUIRED);
