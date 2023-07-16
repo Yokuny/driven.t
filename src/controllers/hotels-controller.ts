@@ -28,8 +28,8 @@ const getRooms = async (req: AuthenticatedRequest, res: Response) => {
 
     res.status(httpStatus.OK).send(HotelRooms);
   } catch (err) {
-    if (err.type === 'BAD_REQUEST') {
-      res.sendStatus(httpStatus.BAD_REQUEST);
+    if (err.name === 'UnauthorizedError') {
+      res.sendStatus(httpStatus.PAYMENT_REQUIRED);
     }
     if (err.name === 'NotFoundError') {
       res.sendStatus(httpStatus.NOT_FOUND);

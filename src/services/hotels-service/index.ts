@@ -2,7 +2,7 @@ import { Hotel } from '@prisma/client';
 import enrollmentsService from '@/services/enrollments-service';
 import hotelsRepository from '@/repositories/hotels-repository';
 import ticketsRepository from '@/repositories/tickets-repository';
-import { notFoundError } from '@/errors';
+import { notFoundError, unauthorizedError } from '@/errors';
 
 const getAllHotels = async (userId: number): Promise<Hotel[]> => {
   const hotels = await hotelsRepository.getAllHotels();
@@ -14,21 +14,19 @@ const getAllHotels = async (userId: number): Promise<Hotel[]> => {
   const ticket = await ticketsRepository.findTicketByEnrollmentId(user.id);
   if (!ticket) throw notFoundError();
 
-  if (ticket.status !== 'RESERVED')
-    throw new Error(JSON.stringify({ type: 'BAD_REQUEST', message: 'Ticket not reserved' }));
+  if (ticket.status !== 'RESERVED') throw unauthorizedError();
 
   const ticketTypes = await ticketsRepository.findTicketTypes();
   const userTicketType = ticketTypes.find((ticketType) => ticketType.id === ticket.ticketTypeId);
 
-  if (!userTicketType.isRemote) throw new Error(JSON.stringify({ type: 'BAD_REQUEST', message: 'Ticket not remote' }));
-  if (!userTicketType.includesHotel)
-    throw new Error(JSON.stringify({ type: 'BAD_REQUEST', message: 'Ticket not hotel' }));
+  if (!userTicketType.isRemote) throw unauthorizedError();
+  if (!userTicketType.includesHotel) throw unauthorizedError();
 
   return hotels;
 };
 
 const getHotelRooms = async (userId: number, hotelId: number) => {
-  if (!hotelId) throw new Error(JSON.stringify({ type: 'BAD_REQUEST', message: 'Missing hotelId' }));
+  if (!hotelId) throw notFoundError();
 
   const hotelAndRooms = await hotelsRepository.getHotelRooms(hotelId);
   if (!hotelAndRooms) throw notFoundError();
@@ -39,15 +37,13 @@ const getHotelRooms = async (userId: number, hotelId: number) => {
   const ticket = await ticketsRepository.findTicketByEnrollmentId(user.id);
   if (!ticket) throw notFoundError();
 
-  if (ticket.status !== 'RESERVED')
-    throw new Error(JSON.stringify({ type: 'BAD_REQUEST', message: 'Ticket not reserved' }));
+  if (ticket.status !== 'RESERVED') throw unauthorizedError();
 
   const ticketTypes = await ticketsRepository.findTicketTypes();
   const userTicketType = ticketTypes.find((ticketType) => ticketType.id === ticket.ticketTypeId);
 
-  if (!userTicketType.isRemote) throw new Error(JSON.stringify({ type: 'BAD_REQUEST', message: 'Ticket not remote' }));
-  if (!userTicketType.includesHotel)
-    throw new Error(JSON.stringify({ type: 'BAD_REQUEST', message: 'Ticket not hotel' }));
+  if (!userTicketType.isRemote) throw unauthorizedError();
+  if (!userTicketType.includesHotel) throw unauthorizedError();
 
   return hotelAndRooms;
 };
