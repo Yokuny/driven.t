@@ -9,11 +9,13 @@ const getHotels = async (req: AuthenticatedRequest, res: Response) => {
     const hotels = await hotelsService.getAllHotels(Number(userId));
     return res.status(httpStatus.OK).send(hotels);
   } catch (err) {
-    if (err.type === 'UnauthorizedError') {
-      return res.sendStatus(httpStatus.BAD_REQUEST);
+    console.log('>>>>>>>' + err.message);
+
+    if (err.message === 'UnauthorizedError') {
+      return res.status(httpStatus.BAD_REQUEST).send(err);
     }
-    if (err.name === 'NotFoundError') {
-      res.sendStatus(httpStatus.NOT_FOUND);
+    if (err.message === 'NotFoundError') {
+      return res.status(httpStatus.NOT_FOUND).send(err);
     }
     return res.status(httpStatus.INTERNAL_SERVER_ERROR).send(err);
   }
@@ -28,13 +30,15 @@ const getRooms = async (req: AuthenticatedRequest, res: Response) => {
 
     return res.status(httpStatus.OK).send(HotelRooms);
   } catch (err) {
-    if (err.name === 'UnauthorizedError') {
-      res.sendStatus(httpStatus.PAYMENT_REQUIRED);
+    console.log('>>>>>>>' + err.message);
+
+    if (err.message === 'UnauthorizedError') {
+      return res.status(httpStatus.PAYMENT_REQUIRED).send(err);
     }
-    if (err.name === 'NotFoundError') {
-      res.sendStatus(httpStatus.NOT_FOUND);
+    if (err.message === 'NotFoundError') {
+      return res.status(httpStatus.NOT_FOUND).send(err);
     }
-    res.status(httpStatus.INTERNAL_SERVER_ERROR).send(err);
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).send(err);
   }
 };
 
