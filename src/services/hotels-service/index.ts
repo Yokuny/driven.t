@@ -2,16 +2,17 @@ import { Hotel } from '@prisma/client';
 import enrollmentsService from '@/services/enrollments-service';
 import hotelsRepository from '@/repositories/hotels-repository';
 import ticketsRepository from '@/repositories/tickets-repository';
+import { notFoundError } from '@/errors';
 
 const getAllHotels = async (userId: number): Promise<Hotel[]> => {
   const hotels = await hotelsRepository.getAllHotels();
-  if (!hotels) throw new Error(JSON.stringify({ type: 'NOT_FOUND', message: 'Hotels not found' }));
+  if (!hotels) throw notFoundError();
 
   const user = await enrollmentsService.getOneWithAddressByUserId(userId);
-  if (!user) throw new Error(JSON.stringify({ type: 'NOT_FOUND', message: 'User not found' }));
+  if (!user) throw notFoundError();
 
   const ticket = await ticketsRepository.findTicketByEnrollmentId(user.id);
-  if (!ticket) throw new Error(JSON.stringify({ type: 'NOT_FOUND', message: 'Ticket not found' }));
+  if (!ticket) throw notFoundError();
 
   if (ticket.status !== 'RESERVED')
     throw new Error(JSON.stringify({ type: 'BAD_REQUEST', message: 'Ticket not reserved' }));
@@ -30,13 +31,13 @@ const getHotelRooms = async (userId: number, hotelId: number) => {
   if (!hotelId) throw new Error(JSON.stringify({ type: 'BAD_REQUEST', message: 'Missing hotelId' }));
 
   const hotelAndRooms = await hotelsRepository.getHotelRooms(hotelId);
-  if (!hotelAndRooms) throw new Error(JSON.stringify({ type: 'NOT_FOUND', message: 'Hotel not found' }));
+  if (!hotelAndRooms) throw notFoundError();
 
   const user = await enrollmentsService.getOneWithAddressByUserId(userId);
-  if (!user) throw new Error(JSON.stringify({ type: 'NOT_FOUND', message: 'User not found' }));
+  if (!user) throw notFoundError();
 
   const ticket = await ticketsRepository.findTicketByEnrollmentId(user.id);
-  if (!ticket) throw new Error(JSON.stringify({ type: 'NOT_FOUND', message: 'Ticket not found' }));
+  if (!ticket) throw notFoundError();
 
   if (ticket.status !== 'RESERVED')
     throw new Error(JSON.stringify({ type: 'BAD_REQUEST', message: 'Ticket not reserved' }));

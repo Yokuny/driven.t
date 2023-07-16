@@ -5,18 +5,17 @@ import { AuthenticatedRequest } from '@/protocols';
 
 const getHotels = async (req: AuthenticatedRequest, res: Response) => {
   const { userId } = req;
-
   try {
-    const hotels = hotelsService.getAllHotels(Number(userId));
-    res.status(httpStatus.OK).send(hotels);
+    const hotels = await hotelsService.getAllHotels(Number(userId));
+    return res.status(httpStatus.OK).send(hotels);
   } catch (err) {
     if (err.type === 'BAD_REQUEST') {
-      res.sendStatus(httpStatus.BAD_REQUEST);
+      return res.sendStatus(httpStatus.BAD_REQUEST);
     }
-    if (err.type === 'NOT_FOUND') {
+    if (err.name === 'NotFoundError') {
       res.sendStatus(httpStatus.NOT_FOUND);
     }
-    res.status(httpStatus.INTERNAL_SERVER_ERROR).send(err);
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).send(err);
   }
 };
 
@@ -32,7 +31,7 @@ const getRooms = async (req: AuthenticatedRequest, res: Response) => {
     if (err.type === 'BAD_REQUEST') {
       res.sendStatus(httpStatus.BAD_REQUEST);
     }
-    if (err.type === 'NOT_FOUND') {
+    if (err.name === 'NotFoundError') {
       res.sendStatus(httpStatus.NOT_FOUND);
     }
     res.status(httpStatus.INTERNAL_SERVER_ERROR).send(err);
