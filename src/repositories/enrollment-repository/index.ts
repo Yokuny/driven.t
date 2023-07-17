@@ -1,8 +1,8 @@
 import { Enrollment } from '@prisma/client';
 import { prisma } from '@/config';
-import { CreateEnrollmentParams, UpdateEnrollmentParams, AddressOrAddressArray } from '@/protocols';
+import { CreateEnrollmentParams, UpdateEnrollmentParams } from '@/protocols';
 
-async function findWithAddressByUserId(userId: number): Promise<Enrollment & { Address: AddressOrAddressArray }> {
+async function findWithAddressByUserId(userId: number) {
   return prisma.enrollment.findFirst({
     where: { userId },
     include: {
