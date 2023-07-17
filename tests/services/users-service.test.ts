@@ -2,7 +2,8 @@ import faker from '@faker-js/faker';
 import bcrypt from 'bcrypt';
 import { createUser as createUserSeed, createEvent as createEventSeed } from '../factories';
 import { cleanDb } from '../helpers';
-import userService, { duplicatedEmailError } from '@/services/users-service';
+import userService from '@/services/users-service';
+import { duplicatedEmailError } from '@/services/users-service/errors';
 import { prisma } from '@/config';
 import { init } from '@/app';
 
