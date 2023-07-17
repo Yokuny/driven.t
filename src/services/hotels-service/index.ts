@@ -9,7 +9,6 @@ const getAllHotels = async (userId: number): Promise<Hotel[]> => {
 
   const ticket = await ticketsService.getTicketByUserId(userId);
   if (!ticket) throw Error('NotFoundError');
-
   if (ticket.status === 'RESERVED') throw Error('paymentError');
 
   const userTicket = await ticketsService.getTicketByUserId(userId);
@@ -30,7 +29,7 @@ const getHotelRooms = async (userId: number, hotelId: number) => {
 
   const ticket = await ticketsService.getTicketByUserId(userId);
   if (!ticket) throw Error('NotFoundError');
-  if (ticket.status === 'RESERVED') throw Error('UnauthorizedError');
+  if (ticket.status === 'RESERVED') throw Error('paymentError');
 
   const userTicket = await ticketsService.getTicketByUserId(userId);
   if (!userTicket.TicketType.includesHotel) throw Error('paymentError');
@@ -39,7 +38,6 @@ const getHotelRooms = async (userId: number, hotelId: number) => {
   const hotelAndRooms = await hotelsRepository.getHotelRooms(hotelId);
   if (!hotelAndRooms) throw Error('NotFoundError');
   if (!hotelAndRooms.Rooms || hotelAndRooms.Rooms.length === 0) throw Error('NotFoundError');
-
   return hotelAndRooms;
 };
 
