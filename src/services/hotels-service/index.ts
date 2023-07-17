@@ -34,10 +34,11 @@ const getHotelRooms = async (userId: number, hotelId: number) => {
 
   const userTicket = await ticketsService.getTicketByUserId(userId);
   if (!userTicket.TicketType.includesHotel) throw Error('paymentError');
-  if (!userTicket.TicketType.isRemote) throw Error('paymentError');
+  if (userTicket.TicketType.isRemote === true) throw Error('paymentError');
 
   const hotelAndRooms = await hotelsRepository.getHotelRooms(hotelId);
-  if (!hotelAndRooms || !hotelAndRooms.Rooms) throw Error('NotFoundError');
+  if (!hotelAndRooms) throw Error('NotFoundError');
+  if (!hotelAndRooms.Rooms || hotelAndRooms.Rooms.length === 0) throw Error('NotFoundError');
 
   return hotelAndRooms;
 };
