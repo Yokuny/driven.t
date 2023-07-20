@@ -48,3 +48,4 @@ const authenticationService = {
 };
 
 export default authenticationService;
+export * from './errors';

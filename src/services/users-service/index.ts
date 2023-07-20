@@ -36,4 +36,5 @@ const userService = {
   createUser,
 };
 
+export * from './errors';
 export default userService;

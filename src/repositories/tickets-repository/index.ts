@@ -1,4 +1,4 @@
-import { TicketStatus, TicketType, Ticket, Enrollment } from '@prisma/client';
+import { TicketStatus, TicketType, Ticket } from '@prisma/client';
 import { prisma } from '@/config';
 import { CreateTicketParams } from '@/protocols';
 

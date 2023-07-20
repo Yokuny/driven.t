@@ -11,12 +11,12 @@ async function getTicketType(): Promise<TicketType[]> {
   return ticketTypes;
 }
 
-async function getTicketByUserId(userId: number) {
+async function getTicketByUserId(userId: number): Promise<Ticket> {
   const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
-  if (!enrollment) throw Error('NotFoundError');
+  if (!enrollment) throw notFoundError();
 
   const ticket = await ticketsRepository.findTicketByEnrollmentId(enrollment.id);
-  if (!ticket) throw Error('NotFoundError');
+  if (!ticket) throw notFoundError();
 
   return ticket;
 }
