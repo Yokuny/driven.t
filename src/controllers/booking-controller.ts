@@ -11,9 +11,9 @@ export async function userBooking(req: AuthenticatedRequest, res: Response) {
 
     return res.status(httpStatus.OK).send(reservation);
   } catch (error) {
-    if (error.message === 'DuplicatedEmailError') return res.status(httpStatus.CONFLICT).send(error);
     if (error.name === 'NotFoundError' || error.message === 'NotFoundError')
-      return res.status(httpStatus.NOT_FOUND).send(error);
+      return res.sendStatus(httpStatus.NOT_FOUND);
+    if (error.message === 'DuplicatedEmailError') return res.sendStatus(httpStatus.CONFLICT);
     return res.status(httpStatus.BAD_REQUEST).send(error);
   }
 }
@@ -27,9 +27,9 @@ export async function reserveRoom(req: AuthenticatedRequest, res: Response) {
 
     return res.status(httpStatus.OK).send({ bookingId });
   } catch (error) {
-    if (error.message === 'NoRoomSpaceError') return res.sendStatus(httpStatus.FORBIDDEN);
     if (error.name === 'NotFoundError' || error.message === 'NotFoundError')
       return res.sendStatus(httpStatus.NOT_FOUND);
+    if (error.message === 'NoRoomSpaceError') return res.sendStatus(httpStatus.FORBIDDEN);
     return res.sendStatus(httpStatus.NOT_FOUND);
   }
 }
@@ -44,10 +44,10 @@ export async function changeReserve(req: AuthenticatedRequest, res: Response) {
 
     return res.status(httpStatus.OK).send(room);
   } catch (error) {
-    if (error.message === 'NoRoomSpaceError') return res.sendStatus(httpStatus.FORBIDDEN);
-    if (error.message === 'CannotListHotelsError') return res.sendStatus(httpStatus.PAYMENT_REQUIRED);
     if (error.name === 'NotFoundError' || error.message === 'NotFoundError')
       return res.sendStatus(httpStatus.NOT_FOUND);
+    if (error.message === 'CannotListHotelsError') return res.sendStatus(httpStatus.PAYMENT_REQUIRED);
+    if (error.message === 'NoRoomSpaceError') return res.sendStatus(httpStatus.FORBIDDEN);
     return res.sendStatus(httpStatus.NOT_FOUND);
   }
 }

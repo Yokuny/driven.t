@@ -14,8 +14,8 @@ export async function generateRoom(userId: number, roomId: number): Promise<Book
 export async function roomForHotel(hotelId: number): Promise<Room> {
   return prisma.room.create({
     data: {
-      name: '1020',
-      capacity: 3,
+      name: 'quarto A17',
+      capacity: 4,
       hotelId: hotelId,
     },
   });
@@ -24,7 +24,7 @@ export async function roomForHotel(hotelId: number): Promise<Room> {
 export async function roomHotelPersonalized(hotelId: number, capacity: number): Promise<Room> {
   return prisma.room.create({
     data: {
-      name: '1000',
+      name: 'Quarto Espacial',
       capacity,
       hotelId: hotelId,
     },
