@@ -30,7 +30,7 @@ export async function reserveRoom(req: AuthenticatedRequest, res: Response) {
     if (error.message === 'NoRoomSpaceError') return res.sendStatus(httpStatus.FORBIDDEN);
     if (error.name === 'NotFoundError' || error.message === 'NotFoundError')
       return res.sendStatus(httpStatus.NOT_FOUND);
-    return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
+    return res.sendStatus(httpStatus.NOT_FOUND);
   }
 }
 
@@ -48,6 +48,6 @@ export async function changeReserve(req: AuthenticatedRequest, res: Response) {
     if (error.message === 'CannotListHotelsError') return res.sendStatus(httpStatus.PAYMENT_REQUIRED);
     if (error.name === 'NotFoundError' || error.message === 'NotFoundError')
       return res.sendStatus(httpStatus.NOT_FOUND);
-    return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
+    return res.sendStatus(httpStatus.NOT_FOUND);
   }
 }
