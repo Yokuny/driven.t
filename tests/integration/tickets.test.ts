@@ -8,13 +8,8 @@ import { cleanDb, generateValidToken } from '../helpers';
 import { prisma } from '@/config';
 import app, { init } from '@/app';
 
-beforeAll(async () => {
-  await init();
-});
-
-beforeEach(async () => {
-  await cleanDb();
-});
+beforeAll(async () => await init());
+beforeEach(async () => await cleanDb());
 
 const server = supertest(app);
 
