@@ -1,24 +1,32 @@
-import faker from '@faker-js/faker';
-import { TicketStatus } from '@prisma/client';
+import { Booking, Room } from '@prisma/client';
 import { prisma } from '@/config';
 
-export async function createTicketType() {
-  return prisma.ticketType.create({
+export async function generateRoom(userId: number, roomId: number): Promise<Booking> {
+  return prisma.booking.create({
     data: {
-      name: faker.name.findName(),
-      price: faker.datatype.number(),
-      isRemote: faker.datatype.boolean(),
-      includesHotel: faker.datatype.boolean(),
+      userId,
+      roomId,
+      updatedAt: new Date(),
     },
   });
 }
 
-export async function createTicket(enrollmentId: number, ticketTypeId: number, status: TicketStatus) {
-  return prisma.ticket.create({
+export async function generateRoomForHotel(hotelId: number): Promise<Room> {
+  return prisma.room.create({
     data: {
-      enrollmentId,
-      ticketTypeId,
-      status,
+      name: '1020',
+      capacity: 3,
+      hotelId: hotelId,
+    },
+  });
+}
+
+export async function generateRoomHotelPersonalized(hotelId: number, capacity: number): Promise<Room> {
+  return prisma.room.create({
+    data: {
+      name: '1000',
+      capacity,
+      hotelId: hotelId,
     },
   });
 }

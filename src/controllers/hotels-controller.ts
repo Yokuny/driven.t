@@ -12,7 +12,7 @@ const getHotels = async (req: AuthenticatedRequest, res: Response) => {
   } catch (err) {
     if (err.message === 'UnauthorizedError') return res.sendStatus(httpStatus.BAD_REQUEST);
     if (err.message === 'paymentError') return res.sendStatus(httpStatus.PAYMENT_REQUIRED);
-    if (err.message === 'NotFoundError') return res.sendStatus(httpStatus.NOT_FOUND);
+    if (err.message === 'NotFoundError' || err.name === 'NotFoundError') return res.sendStatus(httpStatus.NOT_FOUND);
     return res.status(httpStatus.INTERNAL_SERVER_ERROR);
   }
 };
@@ -27,7 +27,7 @@ const getRooms = async (req: AuthenticatedRequest, res: Response) => {
   } catch (err) {
     if (err.message === 'UnauthorizedError') return res.sendStatus(httpStatus.BAD_REQUEST);
     if (err.message === 'paymentError') return res.sendStatus(httpStatus.PAYMENT_REQUIRED);
-    if (err.message === 'NotFoundError') return res.sendStatus(httpStatus.NOT_FOUND);
+    if (err.message === 'NotFoundError' || err.name === 'NotFoundError') return res.sendStatus(httpStatus.NOT_FOUND);
     return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
   }
 };
